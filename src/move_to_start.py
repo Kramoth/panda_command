@@ -11,3 +11,4 @@ if __name__ == '__main__':
     commander = MoveGroupCommander('panda_arm')
     commander.set_named_target('ready')
     commander.go()
+    print("moved to start point")
