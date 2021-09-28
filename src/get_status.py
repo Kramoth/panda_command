@@ -73,14 +73,122 @@ def load_pose():
         
     return oPrePickingPose, oPickingPose, oPrePlacePose,oPlacePose 
 
-
-
-def demo_pick_and_place():
+def place_and_pick(iCommander):
     mPrepickingPose, mPickingPose, mPrePlacePose, mPlacePose=load_pose()
-    print(mPrepickingPose)
-    print(mPickingPose)
-    print(mPrePlacePose)
-    print(mPlacePose)
+
+    #step 0 open gripper
+    open_gripper()
+    # time.sleep(1)
+
+    #step one go to start position
+    iCommander.set_named_target('ready')
+    iCommander.go()
+    # time.sleep(2)
+
+    #step two go to prepicking place
+    cartesian_go_to(iCommander, mPrePlacePose)
+    # time.sleep(2)
+    
+    #step three go to picking place
+    cartesian_go_to(iCommander, mPlacePose)
+    # time.sleep(1)
+    
+    #step four pick the cube
+    control_gripper(0.023,0.04)
+    # time.sleep(1)
+
+    #step five go to prepicking place
+    cartesian_go_to(iCommander, mPrePlacePose)
+    
+    #step six go to start position
+    iCommander.set_named_target('ready')
+    iCommander.go()
+    # time.sleep(2)
+    
+    #step seven go to preplace place
+    cartesian_go_to(iCommander,mPrepickingPose)
+    # time.sleep(1)
+
+    #step eight go to place place
+    cartesian_go_to(iCommander, mPickingPose)
+    # time.sleep(2)
+    
+    #step nine drop the cube
+    open_gripper()
+    # time.sleep(1)
+
+    #step ten go to preplace place
+    cartesian_go_to(iCommander,mPrepickingPose)
+    # time.sleep(2)
+
+    #step eleven go to start position
+    iCommander.set_named_target('ready')
+    iCommander.go()
+
+def pick_and_place(iCommander):
+    mPrepickingPose, mPickingPose, mPrePlacePose, mPlacePose=load_pose()
+
+    #step 0 open gripper
+    open_gripper()
+    # time.sleep(1)
+
+    #step one go to start position
+    iCommander.set_named_target('ready')
+    iCommander.go()
+    # time.sleep(2)
+
+    #step two go to prepicking place
+    cartesian_go_to(iCommander, mPrepickingPose)
+    # time.sleep(2)
+    
+    #step three go to picking place
+    cartesian_go_to(iCommander, mPickingPose)
+    # time.sleep(1)
+    
+    #step four pick the cube
+    control_gripper(0.023,0.04)
+    # time.sleep(1)
+
+    #step five go to prepicking place
+    cartesian_go_to(iCommander, mPrepickingPose)
+    
+    #step six go to start position
+    iCommander.set_named_target('ready')
+    iCommander.go()
+    # time.sleep(2)
+    
+    #step seven go to preplace place
+    cartesian_go_to(iCommander,mPrePlacePose)
+    # time.sleep(1)
+
+    #step eight go to place place
+    cartesian_go_to(iCommander, mPlacePose)
+    # time.sleep(2)
+    
+    #step nine drop the cube
+    open_gripper()
+    # time.sleep(1)
+
+    #step ten go to preplace place
+    cartesian_go_to(iCommander,mPrePlacePose)
+    # time.sleep(2)
+
+    #step eleven go to start position
+    iCommander.set_named_target('ready')
+    iCommander.go()
+
+
+
+
+def demo_pick_and_place_loop(iCommander):
+    for i in range(10):
+        pick_and_place(iCommander)
+        place_and_pick(iCommander)
+
+
+
+
+
 
 if __name__ == '__main__':
     rospy.init_node('get_joint_status')
@@ -88,16 +196,6 @@ if __name__ == '__main__':
     commander = MoveGroupCommander('panda_arm')
     joint=commander.get_current_joint_values()
     ee_pose=commander.get_current_pose().pose
-    
-    pose_goal=Pose()
-
-    pose_goal.orientation=ee_pose.orientation
-    pose_goal.position.x=0.10
-    pose_goal.position.y=0.50
-    pose_goal.position.z=0.600
-    print(pose_goal)
-    # cartesian_go_to(commander, pose_goal)
-    # open_gripper()
-    # commander.set_named_target('ready')
-    # commander.go()
-    demo_pick_and_place()
+    # pick_and_place(commander)
+    # place_and_pick(commander)
+    demo_pick_and_place_loop(commander)
